@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Selector de sesiones tmux con fzf (se lanza en un popup con prefix f).
+# Lista las sesiones por orden alfabético (la actual marcada y con el cursor puesto en ella), filtra al escribir y muestra en la
+# vista previa el contenido del panel activo de la sesión seleccionada. Enter cambia a ella.
+set -euo pipefail
+
+current=$(tmux display-message -p '#S')
+
+# Una línea por sesión: nombre<TAB>texto visible. El nombre va en el primer campo
+# (oculto con --with-nth) para no depender del texto decorado al cambiar de sesión.
+list_sessions() {
+  tmux list-sessions -F '#{session_name}	#{session_windows}	#{session_attached}' |
+    sort |
+    awk -F '\t' -v cur="$current" '
+      {
+        attached = ($3 > 0) ? "\033[32m●\033[0m" : " "
+        win = ($2 == 1) ? "1 ventana" : $2 " ventanas"
+        line = sprintf("%s\t%s %-28s \033[90m%s\033[0m", $1, attached, $1, win)
+        if ($1 == cur) line = line " \033[35m(actual)\033[0m"
+        print line
+      }'
+}
+
+sessions=$(list_sessions)
+# Posición (1-based) de la sesión actual para colocar el cursor ahí al abrir.
+pos=$(printf '%s\n' "$sessions" | awk -F '\t' -v cur="$current" '$1 == cur { print NR; exit }')
+
+selected=$(printf '%s\n' "$sessions" | fzf \
+  --bind "load:pos(${pos:-1})" \
+  --ansi --delimiter '\t' --with-nth 2 \
+  --reverse --cycle --info inline-right \
+  --prompt ' sesión › ' --pointer '▶' --marker '✓' \
+  --header 'Enter: ir · Esc: salir' \
+  --color 'fg:252,bg:-1,hl:#f1fa8c,fg+:232,bg+:#ffa6d2,hl+:#9d2c6b,pointer:#9d2c6b,prompt:#ff6fb5,info:240,header:240,border:#ff6fb5,label:#ff6fb5' \
+  --border rounded --border-label ' tmux ' \
+  --preview 'tmux capture-pane -ep -t {1}: | tail -n "$FZF_PREVIEW_LINES"' \
+  --preview-window 'right,60%,border-left' \
+  | cut -f1) || exit 0
+
+[[ -n "$selected" ]] && tmux switch-client -t "$selected"

@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Copias de seguridad locales
+*.bak
+
+# Secretos locales (las plantillas .env.example sí se versionan)
+.env
+.env.*
+!.env.example

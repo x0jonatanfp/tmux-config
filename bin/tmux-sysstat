@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Métricas para la barra de estado de tmux: CPU, RAM y suma de discos, cada una con su
+# icono Nerd Font y un color según la carga (verde < 60 %, amarillo < 85 %, rojo >= 85 %).
+# Emite estilos #[...] de tmux, que tmux interpreta en la salida de #().
+# La CPU se calcula como delta de /proc/stat entre dos llamadas (tmux la llama cada
+# status-interval segundos); el estado previo se guarda en XDG_RUNTIME_DIR (tmpfs).
+set -u
+
+ICON_CPU=$''
+ICON_RAM=$'\U000f035b'
+ICON_DISK=$'\U000f02ca'
+SEP='#[fg=colour240] │ '
+
+# Color de un porcentaje entero: verde, amarillo o rojo (paleta Dracula).
+level_color() {
+  local pct=$1
+  if ((pct >= 85)); then printf '#ff5555'
+  elif ((pct >= 60)); then printf '#f1fa8c'
+  else printf '#50fa7b'
+  fi
+}
+
+# Segmento: icono coloreado por nivel + valor en texto claro.
+segment() {
+  local icon=$1 pct=$2 text=$3
+  printf '#[fg=%s]%s #[fg=colour252]%s' "$(level_color "$pct")" "$icon" "$text"
+}
+
+state="${XDG_RUNTIME_DIR:-/tmp}/tmux-sysstat.cpu"
+read -r _ user nice system idle iowait irq softirq steal _ < /proc/stat
+total=$((user + nice + system + idle + iowait + irq + softirq + steal))
+idle_all=$((idle + iowait))
+
+cpu_pct=0
+cpu_text="--"
+if [[ -r "$state" ]]; then
+  read -r prev_total prev_idle < "$state"
+  dt=$((total - prev_total))
+  di=$((idle_all - prev_idle))
+  if ((dt > 0)); then
+    cpu_pct=$(((100 * (dt - di) + dt / 2) / dt))
+    cpu_text="${cpu_pct}%"
+  fi
+fi
+printf '%s %s\n' "$total" "$idle_all" > "$state"
+
+# RAM usada = total - disponible (sin contar caché liberable).
+read -r ram_pct ram_text < <(awk '/^MemTotal:/{t=$2} /^MemAvailable:/{a=$2}
+  END{printf "%d %.0f/%.0fG\n", 100*(t-a)/t, (t-a)/1048576, t/1048576}' /proc/meminfo)
+
+# Discos: suma usado/total de los sistemas de ficheros locales reales (/, /mnt/*), sin
+# tmpfs, squashfs (snaps), vfat (/boot/efi) ni /boot; cada dispositivo cuenta una vez.
+read -r disk_pct disk_text < <(df -B1 -l -x tmpfs -x devtmpfs -x squashfs -x efivarfs -x overlay -x vfat \
+  --output=source,target,used,size 2>/dev/null |
+  awk 'NR>1 && $2 !~ /^\/boot/ && !seen[$1]++ {u+=$3; t+=$4}
+       END{g=1073741824; pct=(t>0)?int(100*u/t):0
+           if (t >= 1024*g) printf "%d %.1f/%.1fT\n", pct, u/(1024*g), t/(1024*g)
+           else printf "%d %.0f/%.0fG\n", pct, u/g, t/g}')
+
+printf '%s%s%s%s%s' \
+  "$(segment "$ICON_CPU" "$cpu_pct" "$cpu_text")" "$SEP" \
+  "$(segment "$ICON_RAM" "$ram_pct" "$ram_text")" "$SEP" \
+  "$(segment "$ICON_DISK" "$disk_pct" "$disk_text")"

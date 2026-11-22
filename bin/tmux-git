@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Segmento git para la barra de estado de tmux: rama (o hash corto si HEAD está suelto) y estado
+# del árbol de trabajo. Fuera de un repo no imprime nada. Emite estilos #[...] de tmux.
+#   ✓ limpio · +N preparados · ~N modificados · ?N sin seguimiento · !N conflictos · ⇡N/⇣N por delante/detrás
+# Uso: tmux-git <ruta>  (tmux le pasa #{pane_current_path} cada status-interval segundos).
+set -u
+
+dir=${1:-$PWD}
+# --no-optional-locks: sin él, git status refresca el índice y puede bloquear a un git que esté corriendo en el panel.
+status=$(timeout 2 git --no-optional-locks -C "$dir" status --porcelain=v2 --branch 2>/dev/null) || exit 0
+
+head='' oid='' ahead=0 behind=0 staged=0 modified=0 untracked=0 conflicts=0
+while IFS= read -r line; do
+  case $line in
+    '# branch.head '*) head=${line#\# branch.head } ;;
+    '# branch.oid '*) oid=${line#\# branch.oid } ;;
+    '# branch.ab '*)
+      read -r _ _ a b <<<"$line"
+      ahead=${a#+} behind=${b#-}
+      ;;
+    '1 '* | '2 '*)
+      xy=${line:2:2}
+      [[ ${xy:0:1} != . ]] && ((staged++))
+      [[ ${xy:1:1} != . ]] && ((modified++))
+      ;;
+    'u '*) ((conflicts++)) ;;
+    '? '*) ((untracked++)) ;;
+  esac
+done <<<"$status"
+
+[[ $head == '(detached)' ]] && head=${oid:0:7}
+[[ -z $head ]] && exit 0
+
+ICON_BRANCH=$'\ue725'
+dirty=$((staged + modified + untracked + conflicts))
+# Rama en gris claro si está limpia y en amarillo si hay cambios sin commitear.
+if ((dirty)); then branch_color='#f1fa8c'; else branch_color='colour252'; fi
+out="#[fg=#ff79c6]${ICON_BRANCH} #[fg=${branch_color}]${head}"
+
+((conflicts)) && out+=" #[fg=#ff5555]!${conflicts}"
+((staged)) && out+=" #[fg=#50fa7b]+${staged}"
+((modified)) && out+=" #[fg=#f1fa8c]~${modified}"
+((untracked)) && out+=" #[fg=#8be9fd]?${untracked}"
+((dirty)) || out+=" #[fg=#50fa7b]✓"
+((ahead)) && out+=" #[fg=#bd93f9]⇡${ahead}"
+((behind)) && out+=" #[fg=#ff5555]⇣${behind}"
+
+printf '%s#[fg=colour240] │ ' "$out"
