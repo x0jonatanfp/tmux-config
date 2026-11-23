@@ -1,5 +1,7 @@
 # tmux-config
 
+[Read in English](README.md)
+
 Configuración de tmux y sus scripts auxiliares, versionada y desplegada con enlaces simbólicos. Barra de estado con métricas (CPU, RAM, disco), rama y estado de git, selector de sesiones con fzf y persistencia de sesiones tras reiniciar.
 
 ## Contenido
@@ -56,3 +58,7 @@ Comprueba la sintaxis de los scripts, que la configuración carga sin errores y 
 ## Arquitectura
 
 Todo es configuración y bash. Los segmentos de la barra imprimen estilos `#[...]` de tmux y se invocan con `#()` cada `status-interval`; `tmux-sysstat` guarda la lectura previa de `/proc/stat` en `XDG_RUNTIME_DIR` para calcular la CPU como delta. Los plugins se cargan con `run-shell` desde `~/.tmux/plugins`.
+
+## Licencia
+
+[MIT](LICENSE)
