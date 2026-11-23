@@ -15,3 +15,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# planes y ficheros efímeros de trabajo de los agentes
+tmp/
