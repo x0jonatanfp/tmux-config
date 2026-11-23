@@ -1,28 +1,25 @@
 # AGENTS.md
 
-Configuración de tmux (`tmux.conf`), sus scripts (`bin/`) y el instalador por enlaces simbólicos (`install.sh`). Repo privado, en español.
+tmux configuration (`tmux.conf`), its scripts (`bin/`) and the symlink installer (`install.sh`). Public repo. Docs are bilingual: `README.md` (English) and `README.es.md` (Spanish) must stay equivalent; code comments are in Spanish and explain the why.
 
-## Comandos
+## Commands
 
-- Instalar: `./install.sh` (o `./install.sh --no-plugins`).
-- Probar: `tests/test.sh`. Usa un `HOME` temporal y un servidor tmux aislado (`-L`); no toca la configuración real.
-- Recargar en una sesión viva: `tmux source-file ~/.tmux.conf` (o `prefix r`).
+- Install: `./install.sh` (or `./install.sh --no-plugins`).
+- Test: `tests/test.sh`. It uses a temporary `HOME` and an isolated tmux server (`-L`); it never touches the real configuration.
+- Reload in a live session: `tmux source-file ~/.tmux.conf` (or `prefix r`).
 
-## Convenciones
+## Conventions
 
-- Los scripts son bash con `set -u`/`pipefail`, comentarios en español que explican el porqué y sin rutas ni nombres de usuario fijos (nada de `/home/<usuario>`).
-- `~/.tmux.conf` y los scripts de `~/.local/bin/tmux-*` son **enlaces** a este repo. Se edita aquí, nunca el destino.
-- Los plugins van fijados a una versión en `install.sh` (`RESURRECT_REF`, `CONTINUUM_REF`). Para actualizar, cambia la versión y vuelve a ejecutar la instalación en una máquina limpia.
-- Un cambio de comportamiento lleva su caso en `tests/test.sh` y actualiza el README en el mismo cambio.
+- Scripts are bash with `set -u`/`pipefail`, with no hardcoded paths or user names (no `/home/<user>`).
+- `~/.tmux.conf` and `~/.local/bin/tmux-*` are **links** to this repo. Edit here, never the target.
+- Plugins are pinned to a version in `install.sh` (`RESURRECT_REF`, `CONTINUUM_REF`). To update, change the version and rerun the install on a clean machine.
+- A behavior change comes with its case in `tests/test.sh` and updates both READMEs in the same change.
+- Nothing private in the repo: no real paths, user names, hosts, IPs or secrets. Run `gitleaks dir . --redact --no-banner` before pushing.
 
-## Trampas
+## Gotchas
 
-- La barra usa colores `#rrggbb`: dependen de `terminal-features ",xterm-256color:RGB"`. Si cambia el `TERM` del emulador, ajusta ese patrón.
-- El icono de cada ventana se elige por el **nombre** (`claude*`, `*vim*`, `ssh*`): si algo renombra las ventanas, el icono se pierde.
-- `monitor-activity` está activado porque el punto `●` de la barra depende de él.
-- La persistencia restaura el layout y las rutas, no los procesos. Con `@continuum-restore on` solo restaura cuando arranca el servidor; no hay unidad de arranque.
-- `bind c`, `%` y `"` se redefinen con `-c "#{pane_current_path}"`; si se añaden otros `split-window` o `new-window`, deben llevarlo también.
-
-## Estado
-
-Privado de momento; la idea es publicarlo y enlazarlo desde la web (ficha en el Laboratorio). Al publicarlo, README en inglés y español, `AGENTS.md` en inglés y revisión de fugas.
+- The bar uses `#rrggbb` colors: they depend on `terminal-features ",xterm-256color:RGB"`. If the emulator's `TERM` changes, adjust that pattern.
+- Each window's icon is chosen by **name** (`claude*`, `*vim*`, `ssh*`): if something renames windows, the icon is lost.
+- `monitor-activity` is on because the bar's `●` dot depends on it.
+- Persistence restores layout and paths, not processes. With `@continuum-restore on` it only restores when the server starts; there is no boot unit.
+- `bind c`, `%` and `"` are redefined with `-c "#{pane_current_path}"`; any other `split-window` or `new-window` binding must carry it too.
