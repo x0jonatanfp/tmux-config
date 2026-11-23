@@ -1,0 +1,17 @@
+# Servidor de tmux de usuario: arranca al iniciar sesión y restaura las sesiones guardadas
+# por tmux-continuum sin tener que abrir tmux a mano.
+# - start-server carga ~/.tmux.conf, que lanza el restore de continuum; exit-empty off evita
+#   que el servidor, aún sin sesiones, se cierre antes de que el restore las cree.
+# - ExecStop guarda el estado justo antes de parar, para no perder lo posterior al último
+#   guardado de continuum (cada 15 min).
+# - Parar el servicio guarda y luego cierra el servidor; al volver a arrancarlo se restaura todo.
+[Unit]
+Description=Servidor de tmux con restauración de sesiones
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/env tmux start-server \; set -g exit-empty off
+ExecStop=%h/.tmux/plugins/tmux-resurrect/scripts/save.sh
+
+[Install]
+WantedBy=default.target

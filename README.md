@@ -12,7 +12,8 @@ A tmux configuration and its helper scripts, versioned and installed through sym
 | `bin/tmux-sysstat` | Status bar segment: CPU, RAM and disk, colored by load. |
 | `bin/tmux-git` | Status bar segment: branch and git status of the pane's path. |
 | `bin/tmux-switch` | fzf session picker in a popup (`prefix s` / `prefix f`). |
-| `install.sh` | Creates the links and clones the persistence plugins. |
+| `install.sh` | Creates the links, clones the persistence plugins and enables the systemd user service. |
+| `systemd/tmux.service` | User service that starts the tmux server at login and restores the saved sessions. |
 | `tests/test.sh` | Tests that do not touch your real configuration. |
 
 ## Requirements
@@ -46,6 +47,8 @@ Custom keys (the prefix is the default one, `Ctrl-b`):
 ## Persistence
 
 `tmux-resurrect` and `tmux-continuum` (versions pinned in `install.sh`) save your sessions every 15 minutes and restore them when the tmux server starts. Sessions, windows, panes and paths come back. **Processes do not**: an agent or a server that was running has to be started again.
+
+`install.sh` enables a systemd user service (`tmux.service`) that starts the server when you log in and restores the sessions, so you never have to start tmux by hand first. Stopping the service saves the state and then closes the server. Where there is no user systemd the install skips this step and prints a notice; enable the service by hand then.
 
 ## Versioning
 

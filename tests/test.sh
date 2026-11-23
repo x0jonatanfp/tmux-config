@@ -45,7 +45,19 @@ check "install.sh --no-plugins" "$repo/install.sh" --no-plugins
 check "~/.tmux.conf es un enlace al repo" test "$(readlink "$HOME/.tmux.conf")" = "$repo/tmux.conf"
 check "copia de seguridad del fichero previo" bash -c 'grep -q "fichero real" "$HOME"/.tmux.conf.bak-*'
 check "scripts enlazados" test "$(readlink "$HOME/.local/bin/tmux-git")" = "$repo/bin/tmux-git"
+check "unidad de systemd enlazada" test "$(readlink "$HOME/.config/systemd/user/tmux.service")" = "$repo/systemd/tmux.service"
 check "segunda ejecución sin cambios" bash -c '! "$0" --no-plugins | grep -qE "^(enlazado|copia)"' "$repo/install.sh"
+
+# 3b. La unidad de systemd es válida (si systemd-analyze está disponible)
+if command -v systemd-analyze >/dev/null; then
+  # ExecStop apunta al plugin (%h); en el HOME temporal no está clonado, así que se simula.
+  mkdir -p "$HOME/.tmux/plugins/tmux-resurrect/scripts"
+  printf '#!/bin/sh\n' >"$HOME/.tmux/plugins/tmux-resurrect/scripts/save.sh"
+  chmod +x "$HOME/.tmux/plugins/tmux-resurrect/scripts/save.sh"
+  check "systemd-analyze verify tmux.service" systemd-analyze --user verify "$repo/systemd/tmux.service"
+else
+  echo "omit  systemd-analyze no está instalado"
+fi
 
 # 4. Scripts de la barra
 check "tmux-sysstat imprime CPU, RAM y disco" bash -c '"$0" >/dev/null; test "$("$0" | grep -o "│" | wc -l)" = 2' "$repo/bin/tmux-sysstat"

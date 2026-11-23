@@ -39,6 +39,7 @@ plugin() {
 }
 
 link "$repo/tmux.conf" "$HOME/.tmux.conf"
+link "$repo/systemd/tmux.service" "$HOME/.config/systemd/user/tmux.service"
 for script in "$repo"/bin/*; do
   link "$script" "$HOME/.local/bin/$(basename "$script")"
 done
@@ -46,6 +47,14 @@ done
 if [[ ${1:-} != --no-plugins ]]; then
   plugin tmux-resurrect "$RESURRECT_REF"
   plugin tmux-continuum "$CONTINUUM_REF"
+fi
+
+# Arranque automático: se habilita (no se arranca ahora, para no tocar un servidor en marcha).
+# Sin bus de usuario (ssh sin sesión, contenedor, pruebas) se omite.
+if systemctl --user daemon-reload 2>/dev/null; then
+  systemctl --user enable tmux.service 2>&1 | sed 's/^/systemd   /'
+else
+  echo "omitido  systemd de usuario no disponible: habilita tmux.service a mano"
 fi
 
 echo "Listo. Dentro de tmux, recarga con prefix + r."
