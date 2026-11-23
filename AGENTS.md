@@ -24,3 +24,4 @@ tmux configuration (`tmux.conf`), its scripts (`bin/`) and the symlink installer
 - `monitor-activity` is on because the bar's `●` dot depends on it.
 - Persistence restores layout and paths, not processes. With `@continuum-restore on` it only restores when the server starts; there is no boot unit.
 - `bind c`, `%` and `"` are redefined with `-c "#{pane_current_path}"`; any other `split-window` or `new-window` binding must carry it too.
+- `VERSION` has no trailing newline on purpose: `commit-and-tag-version` reads it raw and a newline ends up in the tag name, which git rejects. Don't let an editor add one.
