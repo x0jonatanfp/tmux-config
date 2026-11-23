@@ -22,6 +22,6 @@ tmux configuration (`tmux.conf`), its scripts (`bin/`) and the symlink installer
 - The bar uses `#rrggbb` colors: they depend on `terminal-features ",xterm-256color:RGB"`. If the emulator's `TERM` changes, adjust that pattern.
 - Each window's icon is chosen by **name** (`claude*`, `*vim*`, `ssh*`): if something renames windows, the icon is lost.
 - `monitor-activity` is on because the bar's `●` dot depends on it.
-- Persistence restores layout and paths, not processes. With `@continuum-restore on` it only restores when the server starts; there is no boot unit.
+- Persistence restores layout and paths, not processes. With `@continuum-restore on` it only restores when the server starts; there is no boot unit. The plugins' `run-shell` lines must not use `-b`: loaded in the background, continuum sees the session that `new -s` already created, assumes the server is not new and skips the restore.
 - `bind c`, `%` and `"` are redefined with `-c "#{pane_current_path}"`; any other `split-window` or `new-window` binding must carry it too.
 - `VERSION` has no trailing newline on purpose: `commit-and-tag-version` reads it raw and a newline ends up in the tag name, which git rejects. Don't let an editor add one.
