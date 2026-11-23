@@ -46,7 +46,7 @@ Teclas propias (el prefijo es el de siempre, `Ctrl-b`):
 
 ## Persistencia
 
-`tmux-resurrect` y `tmux-continuum` (versiones fijadas en `install.sh`) guardan las sesiones cada 15 minutos y las restauran cuando arranca el servidor de tmux. Se recuperan sesiones, ventanas, paneles y rutas. **Los procesos no vuelven**: un agente o un servidor que estuviera corriendo hay que relanzarlo.
+`tmux-resurrect` y `tmux-continuum` (versiones fijadas en `install.sh`) guardan las sesiones cada 15 minutos y las restauran cuando arranca el servidor de tmux. Se recuperan sesiones, ventanas, paneles y rutas. **Los procesos no vuelven**, salvo los agentes: `claude` y `freebuff` se relanzan con `--continue` en la ruta del panel y retoman su última conversación. Cualquier otra cosa que estuviera corriendo hay que relanzarla.
 
 `install.sh` habilita un servicio de systemd de usuario (`tmux.service`) que arranca el servidor al iniciar sesión y restaura las sesiones, así que no hace falta abrir tmux a mano antes. Parar el servicio guarda el estado y después cierra el servidor. Donde no haya systemd de usuario, la instalación omite este paso y avisa; entonces se habilita el servicio a mano.
 

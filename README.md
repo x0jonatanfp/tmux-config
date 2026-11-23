@@ -46,7 +46,7 @@ Custom keys (the prefix is the default one, `Ctrl-b`):
 
 ## Persistence
 
-`tmux-resurrect` and `tmux-continuum` (versions pinned in `install.sh`) save your sessions every 15 minutes and restore them when the tmux server starts. Sessions, windows, panes and paths come back. **Processes do not**: an agent or a server that was running has to be started again.
+`tmux-resurrect` and `tmux-continuum` (versions pinned in `install.sh`) save your sessions every 15 minutes and restore them when the tmux server starts. Sessions, windows, panes and paths come back. **Processes do not come back**, except the agents: `claude` and `freebuff` are relaunched with `--continue` in the pane's path, so they pick up their last conversation. Anything else that was running has to be started again.
 
 `install.sh` enables a systemd user service (`tmux.service`) that starts the server when you log in and restores the sessions, so you never have to start tmux by hand first. Stopping the service saves the state and then closes the server. Where there is no user systemd the install skips this step and prints a notice; enable the service by hand then.
 

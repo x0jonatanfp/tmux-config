@@ -36,6 +36,8 @@ check "history-limit 50000" test "$(tmux -L "$sock" show -gv history-limit)" = 5
 check "monitor-activity on" test "$(tmux -L "$sock" show -wgv monitor-activity)" = on
 check "terminal-features con RGB" grep -q 'RGB' <<<"$(tmux -L "$sock" show -s terminal-features)"
 check "plugins de persistencia sin run-shell -b" bash -c '! grep -qE "^run-shell -b .*(resurrect|continuum)" "$0"' "$repo/tmux.conf"
+check "claude se restaura con --continue" grep -q 'claude->claude --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"
+check "freebuff se restaura con --continue" grep -q 'freebuff->freebuff --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"
 check "ruta actual en bind c" grep -q 'pane_current_path' <<<"$(tmux -L "$sock" list-keys -T prefix c)"
 tmux -L "$sock" kill-server 2>/dev/null
 
