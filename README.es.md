@@ -47,6 +47,10 @@ Teclas propias (el prefijo es el de siempre, `Ctrl-b`):
 
 `tmux-resurrect` y `tmux-continuum` (versiones fijadas en `install.sh`) guardan las sesiones cada 15 minutos y las restauran cuando arranca el servidor de tmux. Se recuperan sesiones, ventanas, paneles y rutas. **Los procesos no vuelven**: un agente o un servidor que estuviera corriendo hay que relanzarlo.
 
+## Versiones
+
+Las releases se sacan con `make release`: la versión de `VERSION` y el `CHANGELOG.md` salen de los tipos de commit (Conventional Commits).
+
 ## Pruebas
 
 ```bash

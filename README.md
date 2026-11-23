@@ -47,6 +47,10 @@ Custom keys (the prefix is the default one, `Ctrl-b`):
 
 `tmux-resurrect` and `tmux-continuum` (versions pinned in `install.sh`) save your sessions every 15 minutes and restore them when the tmux server starts. Sessions, windows, panes and paths come back. **Processes do not**: an agent or a server that was running has to be started again.
 
+## Versioning
+
+Releases are cut with `make release`: the version in `VERSION` and the `CHANGELOG.md` come from the commit types (Conventional Commits).
+
 ## Tests
 
 ```bash

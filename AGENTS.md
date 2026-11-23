@@ -6,6 +6,7 @@ tmux configuration (`tmux.conf`), its scripts (`bin/`) and the symlink installer
 
 - Install: `./install.sh` (or `./install.sh --no-plugins`).
 - Test: `tests/test.sh`. It uses a temporary `HOME` and an isolated tmux server (`-L`); it never touches the real configuration.
+- Release: `make release` (needs a clean tree). The version lives in `VERSION` and is computed from the commit types by `commit-and-tag-version`; never edit it by hand.
 - Reload in a live session: `tmux source-file ~/.tmux.conf` (or `prefix r`).
 
 ## Conventions
