@@ -36,6 +36,10 @@ check "history-limit 50000" test "$(tmux -L "$sock" show -gv history-limit)" = 5
 check "monitor-activity on" test "$(tmux -L "$sock" show -wgv monitor-activity)" = on
 check "terminal-features con RGB" grep -q 'RGB' <<<"$(tmux -L "$sock" show -s terminal-features)"
 check "paleta fucsia sin restos del rosa antiguo" bash -c '! grep -qiE "#ff6fb5|#ffa6d2|#ff79c6|#9d2c6b" "$0" "$1" "$2"' "$repo/tmux.conf" "$repo/bin/tmux-git" "$repo/bin/tmux-switch"
+# Los iconos son glifos Nerd Font invisibles al editar: se comprueban por sus bytes UTF-8
+# (sesión, teclado del prefijo y reloj) para que no se pierdan al reescribir la barra.
+check "barra: iconos de sesión, prefijo y reloj" bash -c 'for g in "\xef\x92\x89" "\xef\x84\x9c" "\xef\x80\x97"; do grep -q "$(printf "$g")" "$0" || exit 1; done' "$repo/tmux.conf"
+check "barra: marca de paneles sincronizados" grep -q "pane_synchronized" "$repo/tmux.conf"
 check "plugins de persistencia sin run-shell -b" bash -c '! grep -qE "^run-shell -b .*(resurrect|continuum)" "$0"' "$repo/tmux.conf"
 check "claude se restaura con --continue" grep -q 'claude->claude --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"
 check "freebuff se restaura con --continue" grep -q 'freebuff->freebuff --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"
