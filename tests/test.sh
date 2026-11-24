@@ -35,6 +35,7 @@ check "detach-on-destroy off" test "$(tmux -L "$sock" show -gv detach-on-destroy
 check "history-limit 50000" test "$(tmux -L "$sock" show -gv history-limit)" = 50000
 check "monitor-activity on" test "$(tmux -L "$sock" show -wgv monitor-activity)" = on
 check "terminal-features con RGB" grep -q 'RGB' <<<"$(tmux -L "$sock" show -s terminal-features)"
+check "paleta fucsia sin restos del rosa antiguo" bash -c '! grep -qiE "#ff6fb5|#ffa6d2|#ff79c6|#9d2c6b" "$0" "$1" "$2"' "$repo/tmux.conf" "$repo/bin/tmux-git" "$repo/bin/tmux-switch"
 check "plugins de persistencia sin run-shell -b" bash -c '! grep -qE "^run-shell -b .*(resurrect|continuum)" "$0"' "$repo/tmux.conf"
 check "claude se restaura con --continue" grep -q 'claude->claude --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"
 check "freebuff se restaura con --continue" grep -q 'freebuff->freebuff --continue' <<<"$(tmux -L "$sock" show -gv @resurrect-processes)"

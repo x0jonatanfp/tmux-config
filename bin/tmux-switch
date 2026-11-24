@@ -31,7 +31,7 @@ selected=$(printf '%s\n' "$sessions" | fzf \
   --reverse --cycle --info inline-right \
   --prompt ' sesión › ' --pointer '▶' --marker '✓' \
   --header 'Enter: ir · Esc: salir' \
-  --color 'fg:252,bg:-1,hl:#f1fa8c,fg+:232,bg+:#ffa6d2,hl+:#9d2c6b,pointer:#9d2c6b,prompt:#ff6fb5,info:240,header:240,border:#ff6fb5,label:#ff6fb5' \
+  --color 'fg:252,bg:-1,hl:#f1fa8c,fg+:232,bg+:#f0abfc,hl+:#86198f,pointer:#86198f,prompt:#e879f9,info:240,header:240,border:#e879f9,label:#e879f9' \
   --border rounded --border-label ' tmux ' \
   --preview 'tmux capture-pane -ep -t {1}: | tail -n "$FZF_PREVIEW_LINES"' \
   --preview-window 'right,60%,border-left' \

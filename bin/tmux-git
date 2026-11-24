@@ -35,7 +35,7 @@ ICON_BRANCH=$'\ue725'
 dirty=$((staged + modified + untracked + conflicts))
 # Rama en gris claro si está limpia y en amarillo si hay cambios sin commitear.
 if ((dirty)); then branch_color='#f1fa8c'; else branch_color='colour252'; fi
-out="#[fg=#ff79c6]${ICON_BRANCH} #[fg=${branch_color}]${head}"
+out="#[fg=#e879f9]${ICON_BRANCH} #[fg=${branch_color}]${head}"
 
 ((conflicts)) && out+=" #[fg=#ff5555]!${conflicts}"
 ((staged)) && out+=" #[fg=#50fa7b]+${staged}"
