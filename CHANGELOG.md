@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.1.0...v1.2.0) (2026-11-24)
+
+### Features
+
+* pasa la paleta al fucsia de la web ([7821e38](https://github.com/x0jonatanfp/tmux-config/commit/7821e38dac64bfdac9643e5e747004289273e2c7)), references [#ff6fb5](https://github.com/x0jonatanfp/tmux-config/issues/ff6fb5) [#ffa6d2](https://github.com/x0jonatanfp/tmux-config/issues/ffa6d2) [#e879f9](https://github.com/x0jonatanfp/tmux-config/issues/e879f9) [#f0abfc](https://github.com/x0jonatanfp/tmux-config/issues/f0abfc) [#ff79c6](https://github.com/x0jonatanfp/tmux-config/issues/ff79c6) [#86198f](https://github.com/x0jonatanfp/tmux-config/issues/86198f)
+
 ## [1.1.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.0.0...v1.1.0) (2026-11-23)
 
 ### Features
