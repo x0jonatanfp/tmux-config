@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.3.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.2.0...v1.3.0) (2026-11-24)
+
+### Features
+
+* barra de tmux con pastillas redondeadas y paneles sincronizados ([c1ba5cd](https://github.com/x0jonatanfp/tmux-config/commit/c1ba5cd93442c8d00e2d264dae0db5a06608b3e9))
+
 ## [1.2.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.1.0...v1.2.0) (2026-11-24)
 
 ### Features
