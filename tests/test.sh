@@ -33,7 +33,8 @@ errors=$(tmux -L "$sock" -f "$repo/tmux.conf" new-session -d 2>&1)
 check "tmux.conf carga sin errores" test -z "$errors"
 check "detach-on-destroy off" test "$(tmux -L "$sock" show -gv detach-on-destroy)" = off
 check "history-limit 50000" test "$(tmux -L "$sock" show -gv history-limit)" = 50000
-check "monitor-activity on" test "$(tmux -L "$sock" show -wgv monitor-activity)" = on
+check "monitor-activity off" test "$(tmux -L "$sock" show -wgv monitor-activity)" = off
+check "monitor-silence 0" test "$(tmux -L "$sock" show -wgv monitor-silence)" = 0
 check "terminal-features con RGB" grep -q 'RGB' <<<"$(tmux -L "$sock" show -s terminal-features)"
 check "paleta fucsia sin restos del rosa antiguo" bash -c '! grep -qiE "#ff6fb5|#ffa6d2|#ff79c6|#9d2c6b" "$0" "$1" "$2"' "$repo/tmux.conf" "$repo/bin/tmux-git" "$repo/bin/tmux-switch"
 # Los iconos son glifos Nerd Font invisibles al editar: se comprueban por sus bytes UTF-8
@@ -67,6 +68,15 @@ else
 fi
 
 # 4. Scripts de la barra
+check "tmux-working ignora un panel inválido" bash -c 'test -z "$("$0" x)"' "$repo/bin/tmux-working"
+check "tmux-working: pantalla que cambia sí, pantalla quieta no" bash -c '
+  export XDG_RUNTIME_DIR="$2" TMUX_WORKING_MAX=3
+  tmux -L "$1" new-session -d -s w "while :; do date +%N; sleep 0.2; done"
+  tmux -L "$1" new-session -d -s i "echo listo; sleep 60"
+  export TMUX="$(tmux -L "$1" display -p "#{socket_path},0,0")"
+  w=$(tmux display -p -t w "#{pane_id}"); i=$(tmux display -p -t i "#{pane_id}")
+  "$0" "$w" >/dev/null; "$0" "$i" >/dev/null; sleep 1
+  test -n "$("$0" "$w")" && test -z "$("$0" "$i")"' "$repo/bin/tmux-working" "$sock" "$tmp"
 check "tmux-sysstat imprime CPU, RAM y disco" bash -c '"$0" >/dev/null; test "$("$0" | grep -o "│" | wc -l)" = 2' "$repo/bin/tmux-sysstat"
 git init -q "$tmp/repo" && git -C "$tmp/repo" -c user.name=t -c user.email=t@t commit -q --allow-empty -m init
 check "tmux-git en repo limpio muestra ✓" bash -c '"$0" "$1" | grep -q "✓"' "$repo/bin/tmux-git" "$tmp/repo"

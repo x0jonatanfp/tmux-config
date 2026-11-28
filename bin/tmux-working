@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Punto ● rosa para una ventana de la barra de tmux cuyo agente está trabajando, sea cual
+# sea el agente: un agente en marcha repinta la pantalla sin parar (spinner, temporizador,
+# texto que llega) y uno parado no. Uso: tmux-working <pane_id>.
+# tmux llama a esto cada status-interval; se guarda un hash del contenido visible y la hora
+# del último cambio, y el punto sale si cambió hace menos de MAX segundos.
+set -u
+pane=${1:-}
+[[ $pane =~ ^%[0-9]+$ ]] || exit 0
+max=${TMUX_WORKING_MAX:-12}
+dir="${XDG_RUNTIME_DIR:-/tmp}/tmux-working"
+mkdir -p "$dir"
+state="$dir/${pane#%}"
+now=$(date +%s)
+hash=$(tmux capture-pane -p -t "$pane" 2>/dev/null | md5sum | cut -d' ' -f1)
+prev_hash="" changed=0
+[[ -r $state ]] && read -r prev_hash changed < "$state"
+if [[ $hash != "$prev_hash" ]]; then
+  # Primera vez que se ve el panel: no se sabe si estaba parado, se da por parado.
+  if [[ -n $prev_hash ]]; then changed=$now; else changed=0; fi
+  printf '%s %s\n' "$hash" "$changed" > "$state"
+fi
+if [[ $changed =~ ^[0-9]+$ ]] && ((now - changed <= max)); then
+  printf '#[fg=#e879f9] ●'
+fi
