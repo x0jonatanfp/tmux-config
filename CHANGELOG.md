@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.3.0...v1.4.0) (2026-11-28)
+
+### Features
+
+* **bar:** marca con un punto rosa la ventana cuyo agente está trabajando ([d513e9a](https://github.com/x0jonatanfp/tmux-config/commit/d513e9ab9ce3b2dce3f4703cc5c27b0ee632c32f))
+
 ## [1.3.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.2.0...v1.3.0) (2026-11-24)
 
 ### Features
