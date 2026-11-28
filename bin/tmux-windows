@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Selector de ventanas tmux con fzf (se lanza en un popup con prefix w).
+# Lista las ventanas de todas las sesiones (sesión:índice nombre, nº de paneles y ruta
+# del panel activo con ~), ordenadas por sesión e índice, con el cursor en la ventana
+# actual. Filtra al escribir y muestra en la vista previa el panel activo de la ventana
+# seleccionada. Enter cambia a ella.
+set -euo pipefail
+
+current=$(tmux display-message -p '#{session_name}:#{window_index}')
+
+# Una línea por ventana: destino<TAB>texto visible. El destino va en el primer campo
+# (oculto con --with-nth) para no depender del texto decorado al cambiar de ventana.
+list_windows() {
+  tmux list-windows -a -F '#{session_name}	#{window_index}	#{window_name}	#{window_panes}	#{window_active}	#{session_attached}	#{pane_current_path}' |
+    sort -t $'\t' -k1,1 -k2,2n |
+    awk -F '\t' -v cur="$current" -v home="$HOME" '
+      {
+        target = $1 ":" $2
+        path = $7
+        if (index(path, home) == 1) path = "~" substr(path, length(home) + 1)
+        dot = ($5 == 1 && $6 > 0) ? "\033[32m●\033[0m" : " "
+        panes = ($4 == 1) ? "" : sprintf(" \033[90m%s paneles\033[0m", $4)
+        line = sprintf("%s\t%s %-16s %-24s%s \033[90m%s\033[0m", target, dot, $1, $3, panes, path)
+        if (target == cur) line = line " \033[38;2;232;121;249m(actual)\033[0m"
+        print line
+      }'
+}
+
+windows=$(list_windows)
+# Posición (1-based) de la ventana actual para colocar el cursor ahí al abrir.
+pos=$(printf '%s\n' "$windows" | awk -F '\t' -v cur="$current" '$1 == cur { print NR; exit }')
+
+selected=$(printf '%s\n' "$windows" | fzf \
+  --bind "load:pos(${pos:-1})" \
+  --ansi --delimiter '\t' --with-nth 2 \
+  --reverse --cycle --info inline-right \
+  --prompt ' ventana › ' --pointer '▶' --marker '✓' \
+  --header 'Enter: ir · Esc: salir' \
+  --color 'fg:252,bg:-1,hl:#f1fa8c,fg+:232,bg+:#f0abfc,hl+:#86198f,pointer:#86198f,prompt:#e879f9,info:240,header:240,border:#e879f9,label:#e879f9' \
+  --border rounded --border-label ' tmux ' \
+  --preview 'tmux capture-pane -ep -t {1} | tail -n "$FZF_PREVIEW_LINES"' \
+  --preview-window 'right,60%,border-left' \
+  | cut -f1) || exit 0
+
+[[ -n "$selected" ]] && tmux switch-client -t "$selected"

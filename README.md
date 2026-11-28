@@ -12,6 +12,7 @@ A tmux configuration and its helper scripts, versioned and installed through sym
 | `bin/tmux-sysstat` | Status bar segment: CPU, RAM and disk, colored by load. |
 | `bin/tmux-git` | Status bar segment: branch and git status of the pane's path. |
 | `bin/tmux-switch` | fzf session picker in a popup (`prefix s` / `prefix f`). |
+| `bin/tmux-windows` | fzf picker for every window of every session, in a popup (`prefix w`). |
 | `bin/tmux-working` | Status bar segment: pink `●` on a window whose agent is working (Claude Code, opencode, pi or freebuff). |
 | `install.sh` | Creates the links, clones the persistence plugins and enables the systemd user service. |
 | `systemd/tmux.service` | User service that starts the tmux server at login and restores the saved sessions. |
@@ -39,8 +40,8 @@ Custom keys (the prefix is the default one, `Ctrl-b`):
 | Key | Action |
 | --- | --- |
 | `prefix s` / `prefix f` | fzf session picker with preview. |
+| `prefix w` | fzf window picker (all sessions) with preview. |
 | `prefix S` | Classic session tree. |
-| `prefix w` | Window tree. |
 | `prefix r` | Reload the configuration. |
 
 `prefix c`, `prefix %` and `prefix "` keep their meaning, but now open the window or pane in the current pane's path.

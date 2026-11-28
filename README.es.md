@@ -12,6 +12,7 @@ Configuración de tmux y sus scripts auxiliares, versionada y desplegada con enl
 | `bin/tmux-sysstat` | Segmento de la barra: CPU, RAM y disco con color por carga. |
 | `bin/tmux-git` | Segmento de la barra: rama y estado git de la ruta del panel. |
 | `bin/tmux-switch` | Selector de sesiones con fzf en popup (`prefix s` / `prefix f`). |
+| `bin/tmux-windows` | Selector fzf de todas las ventanas de todas las sesiones, en popup (`prefix w`). |
 | `bin/tmux-working` | Segmento de la barra: `●` rosa en la ventana cuyo agente está trabajando (Claude Code, opencode, pi o freebuff). |
 | `install.sh` | Crea los enlaces, clona los plugins de persistencia y habilita el servicio de systemd de usuario. |
 | `systemd/tmux.service` | Servicio de usuario que arranca el servidor de tmux al iniciar sesión y restaura las sesiones guardadas. |
@@ -39,8 +40,8 @@ Teclas propias (el prefijo es el de siempre, `Ctrl-b`):
 | Tecla | Acción |
 | --- | --- |
 | `prefix s` / `prefix f` | Selector de sesiones con fzf y vista previa. |
+| `prefix w` | Selector de ventanas con fzf (todas las sesiones) y vista previa. |
 | `prefix S` | Árbol clásico de sesiones. |
-| `prefix w` | Árbol de ventanas. |
 | `prefix r` | Recarga la configuración. |
 
 `prefix c`, `prefix %` y `prefix "` no cambian, pero ahora abren la ventana o el panel en la ruta del panel actual.
