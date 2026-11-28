@@ -12,6 +12,7 @@ A tmux configuration and its helper scripts, versioned and installed through sym
 | `bin/tmux-sysstat` | Status bar segment: CPU, RAM and disk, colored by load. |
 | `bin/tmux-git` | Status bar segment: branch and git status of the pane's path. |
 | `bin/tmux-switch` | fzf session picker in a popup (`prefix s` / `prefix f`). |
+| `bin/tmux-working` | Status bar segment: pink `●` on a window whose agent is working (its screen keeps changing). |
 | `install.sh` | Creates the links, clones the persistence plugins and enables the systemd user service. |
 | `systemd/tmux.service` | User service that starts the tmux server at login and restores the saved sessions. |
 | `tests/test.sh` | Tests that do not touch your real configuration. |
