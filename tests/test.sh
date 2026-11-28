@@ -69,14 +69,26 @@ fi
 
 # 4. Scripts de la barra
 check "tmux-working ignora un panel inválido" bash -c 'test -z "$("$0" x)"' "$repo/bin/tmux-working"
-check "tmux-working: pantalla que cambia sí, pantalla quieta no" bash -c '
-  export XDG_RUNTIME_DIR="$2" TMUX_WORKING_MAX=3
-  tmux -L "$1" new-session -d -s w "while :; do date +%N; sleep 0.2; done"
-  tmux -L "$1" new-session -d -s i "echo listo; sleep 60"
-  export TMUX="$(tmux -L "$1" display -p "#{socket_path},0,0")"
-  w=$(tmux display -p -t w "#{pane_id}"); i=$(tmux display -p -t i "#{pane_id}")
-  "$0" "$w" >/dev/null; "$0" "$i" >/dev/null; sleep 1
-  test -n "$("$0" "$w")" && test -z "$("$0" "$i")"' "$repo/bin/tmux-working" "$sock" "$tmp"
+# Pantallas reales de cada agente, trabajando y parado (capturadas con cada uno en marcha).
+# Un panel que solo imprime el texto sirve: el script lee el contenido, no el proceso.
+tw_check() { # tw_check <nombre> <si|no> <texto>
+  local out
+  tmux -L "$sock" new-session -d -s "tw$$" "printf '%b' '$3'; sleep 30"
+  sleep 0.4
+  out=$(TMUX="$(tmux -L "$sock" display -p '#{socket_path},0,0')" "$repo/bin/tmux-working" "$(tmux -L "$sock" display -p -t "tw$$" '#{pane_id}')")
+  tmux -L "$sock" kill-session -t "tw$$" 2>/dev/null
+  if [[ $2 = si ]]; then check "tmux-working: $1" test -n "$out"; else check "tmux-working: $1" test -z "$out"; fi
+}
+tw_check "claude trabajando" si '* Actualizing... (4s)\n  esc to interrupt\n'
+tw_check "claude parado" no '  ? for shortcuts\n'
+tw_check "opencode trabajando" si '   ■■■⬝⬝⬝⬝⬝ esc interrupt\n'
+tw_check "opencode parado" no '  Build · Big Pickle OpenCode\n'
+tw_check "pi trabajando" si '── ⠧ Working ───────\n'
+tw_check "pi parado" no '🧠 probe · ready\n'
+tw_check "freebuff trabajando" si ' working...\n│  ▍Add to the current task (/ for commands)\n'
+tw_check "freebuff parado con cuenta atrás" no ' 3:24 left · 42.9K (4%)\n│  Enter a coding task or / for commands\n'
+tw_check "panel sin agente" no 'cultofskaro@void:~$ \n'
+check "tmux-working ignora un panel inválido" bash -c 'test -z "$("$0" x)"' "$repo/bin/tmux-working"
 check "tmux-sysstat imprime CPU, RAM y disco" bash -c '"$0" >/dev/null; test "$("$0" | grep -o "│" | wc -l)" = 2' "$repo/bin/tmux-sysstat"
 git init -q "$tmp/repo" && git -C "$tmp/repo" -c user.name=t -c user.email=t@t commit -q --allow-empty -m init
 check "tmux-git en repo limpio muestra ✓" bash -c '"$0" "$1" | grep -q "✓"' "$repo/bin/tmux-git" "$tmp/repo"

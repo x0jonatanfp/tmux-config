@@ -12,7 +12,7 @@ Configuración de tmux y sus scripts auxiliares, versionada y desplegada con enl
 | `bin/tmux-sysstat` | Segmento de la barra: CPU, RAM y disco con color por carga. |
 | `bin/tmux-git` | Segmento de la barra: rama y estado git de la ruta del panel. |
 | `bin/tmux-switch` | Selector de sesiones con fzf en popup (`prefix s` / `prefix f`). |
-| `bin/tmux-working` | Segmento de la barra: `●` rosa en la ventana cuyo agente está trabajando (su pantalla no deja de cambiar). |
+| `bin/tmux-working` | Segmento de la barra: `●` rosa en la ventana cuyo agente está trabajando (Claude Code, opencode, pi o freebuff). |
 | `install.sh` | Crea los enlaces, clona los plugins de persistencia y habilita el servicio de systemd de usuario. |
 | `systemd/tmux.service` | Servicio de usuario que arranca el servidor de tmux al iniciar sesión y restaura las sesiones guardadas. |
 | `tests/test.sh` | Pruebas sin tocar la configuración real. |
