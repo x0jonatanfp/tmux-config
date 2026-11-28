@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.4.1](https://github.com/x0jonatanfp/tmux-config/compare/v1.4.0...v1.4.1) (2026-11-28)
+
+### Bug Fixes
+
+* **bar:** el punto solo sale con el spinner o el aviso de trabajo del agente ([54f2f05](https://github.com/x0jonatanfp/tmux-config/commit/54f2f057f692635e692c6daa55af7f63475bb50b))
+
 ## [1.4.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.3.0...v1.4.0) (2026-11-28)
 
 ### Features
