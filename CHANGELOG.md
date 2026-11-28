@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.5.0](https://github.com/x0jonatanfp/tmux-config/compare/v1.4.1...v1.5.0) (2026-11-28)
+
+### Features
+
+* prefix w abre un selector fzf con todas las ventanas de todas las sesiones ([c861071](https://github.com/x0jonatanfp/tmux-config/commit/c86107194d5929e8252a63e9b30d71b62848ba69))
+
 ## [1.4.1](https://github.com/x0jonatanfp/tmux-config/compare/v1.4.0...v1.4.1) (2026-11-28)
 
 ### Bug Fixes
